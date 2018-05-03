@@ -3,6 +3,7 @@ import time
 import os
 
 import wget
+from PIL import Image
 from selenium import webdriver
 import re
 
@@ -14,6 +15,33 @@ chrome_options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(chrome_options=chrome_options)
 driver.set_page_load_timeout(30)
 
+
+def sort():
+    current_directory = os.getcwd()
+
+    Path = os.path.join(current_directory + '/new folder/')
+    filelist = os.listdir(Path)
+    x = []
+    for i in filelist:
+        with Image.open(Path + i) as img:
+            width, height = img.size
+            x.append(str(width) + "x" + str(height))
+
+    uniquelist = list(set(x))
+
+    for u in uniquelist:
+
+        final_directory = os.path.join(current_directory + '/new folder/', r'' + u)
+        if not os.path.exists(final_directory):
+            os.makedirs(final_directory)
+
+    for i in filelist:
+        width = 0
+        height = 0
+        with Image.open(Path + i) as img:
+            width, height = img.size
+            img.close()
+        os.rename(Path + i, Path + str(width) + "x" + str(height) + "/" + i)
 
 
 def options():
@@ -105,20 +133,14 @@ def download(link):
         if not os.path.exists(final_directory):
             os.makedirs(final_directory)
 
+
         for n in uniquelist:
+            print(str(x)+" - "+n)
             wget.download(n, current_directory + '/new folder/' + str(x) + '.jpg')
             x += 1
-
+    sort()
     print("time taken: "+str(time.time()-starttime))
 
 
 
 options()
-'''
-s150x150
-s240x240
-s320x320
-
-"https://instagram.fcmb1-1.fna.fbcdn.net/vp/cac3363d82449bba8b01d7b8b16ad967/5B9B9073/t51.2885-15/s320x320/e35/c0.109.927.927/28153927_539532719763942_7795927771854667776_n.jpg"
-"https://instagram.fcmb1-1.fna.fbcdn.net/vp/df51aa78c729bf8ead6971fd1cbb41d9/5B78A69B/t51.2885-15/s240x240/e35/c0.109.927.927/28153927_539532719763942_7795927771854667776_n.jpg"
-'''
