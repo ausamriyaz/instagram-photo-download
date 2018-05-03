@@ -12,12 +12,21 @@ prefs = {"profile.default_content_setting_values.notifications": 2}
 chrome_options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(chrome_options=chrome_options)
 driver.set_page_load_timeout(30)
-link = "link"
+link = "https://www.instagram.com"
 driver.get(link)
 ##scrolling
-driver.execute_script(
-    "var lastScrollHeight = 0;function autoScroll() {var sh = document.documentElement.scrollHeight;if (sh != lastScrollHeight) {lastScrollHeight = sh;document.documentElement.scrollTop = sh;}}window.setInterval(autoScroll, 100);")
-time.sleep(10)
+
+starttime= time.time()
+lenOfPage = driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
+match = False
+while (match == False):
+    lastCount = lenOfPage
+    time.sleep(3)
+    lenOfPage = driver.execute_script("window.scrollTo(0, document.body.scrollHeight);var lenOfPage=document.body.scrollHeight;return lenOfPage;")
+    if lastCount == lenOfPage:
+        match = True
+
+
 html = driver.page_source
 alllist = []
 
@@ -42,3 +51,5 @@ else:
     for n in uniquelist:
         wget.download(n, current_directory + '/new folder/' + str(x) + '.jpg')
         x += 1
+
+print(time.time()-starttime)
